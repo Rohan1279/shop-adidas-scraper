@@ -1,8 +1,33 @@
+# import scrapy
+# class AdidasSpiderSpider(scrapy.Spider):
+#     name = "adidas_spider"
+#     allowed_domains = ["www.adidas.com"]
+#     start_urls = ["https://www.adidas.com/us/men-athletic_sneakers"]
+
+#     def parse(self, response):
+#         product_cards = response.css('div.glass-product-card')
+
+#         print("\n******************\n" + "PRODUCTS COUNT", len(product_cards))
+#         for product_card in product_cards:
+#             relative_url  = product_card.css('a[data-auto-id="glass-hockeycard-link"]').attrib['href']
+              
+           
+#             product_url =  "https://www.adidas.com" + relative_url
+#             yield response.follow(product_url, callback=self.parse_product_page)
+
+        
+#         next_page = response.css('a[data-auto-id="plp-pagination-next"]').attrib['href']
+#         if next_page is not None:
+#                 next_page_url =  "https://www.adidas.com" + next_page
+#                 print("\n******************\n" + "NEXT PAGE" + "\n******************\n", next_page_url)
+#                 yield response.follow(next_page_url, callback=self.parse)
+
+# using splash
 import scrapy
+from scrapy_splash import SplashRequest
+
 class AdidasSpiderSpider(scrapy.Spider):
-    name = "adidas_spider"
-    allowed_domains = ["www.adidas.com"]
-    start_urls = ["https://www.adidas.com/us/men-athletic_sneakers"]
+    # ... (rest of your code)
 
     def parse(self, response):
         product_cards = response.css('div.glass-product-card')
@@ -10,17 +35,15 @@ class AdidasSpiderSpider(scrapy.Spider):
         print("\n******************\n" + "PRODUCTS COUNT", len(product_cards))
         for product_card in product_cards:
             relative_url  = product_card.css('a[data-auto-id="glass-hockeycard-link"]').attrib['href']
-              
-           
             product_url =  "https://www.adidas.com" + relative_url
-            yield response.follow(product_url, callback=self.parse_product_page)
 
-        
+            yield SplashRequest(url=product_url, callback=self.parse_product_page, args={'wait': 2})
+           
         next_page = response.css('a[data-auto-id="plp-pagination-next"]').attrib['href']
         if next_page is not None:
                 next_page_url =  "https://www.adidas.com" + next_page
                 print("\n******************\n" + "NEXT PAGE" + "\n******************\n", next_page_url)
-                yield response.follow(next_page_url, callback=self.parse)
+                yield SplashRequest(url=next_page_url, callback=self.parse, args={'wait': 2})
 
     def parse_product_page(self, response):
         
@@ -39,9 +62,9 @@ class AdidasSpiderSpider(scrapy.Spider):
             "seller_id":"",
             "seller_name":"adidas",
             "seller_phone":"",
-            "isAdvertised":false,
-            "isReported":false,
-            "inStock":true,
+            # "isAdvertised":false,
+            # "isReported":false,
+            # "inStock":true,
             "brand":"Adidas",
             "sizes":[{"id":"1","name":"29","stock":"","price":""},{"id":"2","name":"30","stock":"","price":""},{"id":"3","name":"31","stock":"","price":""},{"id":"4","name":"32","stock":"","price":""},{"id":"5","name":"34","stock":"","price":""}],
         }
