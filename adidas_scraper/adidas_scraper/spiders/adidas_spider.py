@@ -9,6 +9,7 @@ class AdidasSpiderSpider(scrapy.Spider):
     def parse(self, response):
         product_cards = response.css('div.glass-product-card')
 
+        print("\n******************\n" + "PRODUCTS COUNT", len(product_cards))
         for product_card in product_cards:
             relative_url  = product_card.css('a[data-auto-id="glass-hockeycard-link"]').attrib['href']
               
@@ -20,6 +21,7 @@ class AdidasSpiderSpider(scrapy.Spider):
         next_page = response.css('a[data-auto-id="plp-pagination-next"]').attrib['href']
         if next_page is not None:
                 next_page_url =  "https://www.adidas.com" + next_page
+                print("\n******************\n" + "NEXT PAGE" + "\n******************\n", next_page_url)
                 yield response.follow(next_page_url, callback=self.parse)
 
     def parse_product_page(self, response):
