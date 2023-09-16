@@ -1,6 +1,4 @@
 import scrapy
-
-
 class AdidasSpiderSpider(scrapy.Spider):
     name = "adidas_spider"
     allowed_domains = ["www.adidas.com"]
@@ -29,5 +27,29 @@ class AdidasSpiderSpider(scrapy.Spider):
         yield {
             "img" : response.css('picture[data-testid="pdp-gallery-picture"] img::attr(src)').get(),
             "name" : response.css('h1[data-auto-id="product-title"] span::text').get(),
-            "price" : response.css('div.gl-price-item::text').get()
+            "price" : response.css('div.gl-price-item::text').get(),
+            "color" : response.css('div[data-auto-id="color-label"] ::text').get(),
         }
+
+# {"_id":{"$oid":"63c417a57229a7dca8c2095e"},
+#  "category":"Men's Pants",
+#  "category_id":"63bc18eb473f136f0720ce0a",
+#  "seller":"Adidas",
+#  "name":"Primegreen Essentials Warm-Up Open Hem 3-Stripes Track Pants",
+#  "price":{"$numberInt":"100"},
+#  "description":"",
+#  "reviewsCount":{"$numberInt":"263"},
+#  "ratings":{"$numberDouble":"4.6"},
+#  "img":"",
+#  "color":"",
+#  "productLinkHref":"https://www.adidas.com/us/primegreen-essentials-warm-up-open-hem-3-stripes-track-pants/H48429.html",
+#  "seller_default_image":"https://static.vecteezy.com/system/resources/thumbnails/009/312/919/small/3d-render-cute-girl-sit-crossed-legs-hold-laptop-studying-at-home-png.png",
+#  "seller_email":"adidas@adidas.com",
+#  "seller_id":"",
+#  "seller_name":"adidas",
+#  "seller_phone":"",
+#  "isAdvertised":false,
+#  "isReported":false,
+#  "inStock":true,
+#  "brand":"Adidas",
+#  "sizes":[{"id":"1","name":"29","stock":"","price":""},{"id":"2","name":"30","stock":"","price":""},{"id":"3","name":"31","stock":"","price":""},{"id":"4","name":"32","stock":"","price":""},{"id":"5","name":"34","stock":"","price":""}]}
