@@ -25,11 +25,27 @@ class AdidasSpiderSpider(scrapy.Spider):
     def parse_product_page(self, response):
         
         yield {
+            "category":"Men's Sneaker",
+            "category_id":"63bc18eb473f136f0720ce0a",
+            "seller":"Adidas",
+            "description":"",
+            "reviewsCount": "",
+            "ratings": "",
             "img" : response.css('picture[data-testid="pdp-gallery-picture"] img::attr(src)').get(),
             "name" : response.css('h1[data-auto-id="product-title"] span::text').get(),
             "price" : response.css('div.gl-price-item::text').get(),
             "color" : response.css('div[data-auto-id="color-label"] ::text').get(),
+            "seller_email":"adidas@adidas.com",
+            "seller_id":"",
+            "seller_name":"adidas",
+            "seller_phone":"",
+            "isAdvertised":false,
+            "isReported":false,
+            "inStock":true,
+            "brand":"Adidas",
+            "sizes":[{"id":"1","name":"29","stock":"","price":""},{"id":"2","name":"30","stock":"","price":""},{"id":"3","name":"31","stock":"","price":""},{"id":"4","name":"32","stock":"","price":""},{"id":"5","name":"34","stock":"","price":""}],
         }
+
 
 # {"_id":{"$oid":"63c417a57229a7dca8c2095e"},
 #  "category":"Men's Pants",

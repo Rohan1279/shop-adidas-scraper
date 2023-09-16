@@ -1,3 +1,12 @@
+SPLASH_URL = 'http://localhost:8050/'  # Assuming Splash is running locally on default port
+DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
+HTTPCACHE_STORAGE = 'scrapy_splash.SplashAwareFSCacheStorage'
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy_splash.SplashCookiesMiddleware': 723,
+    'scrapy_splash.SplashMiddleware': 725,
+    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+}
+
 # Scrapy settings for adidas_scraper project
 #
 # For simplicity, this file contains only settings considered important or
