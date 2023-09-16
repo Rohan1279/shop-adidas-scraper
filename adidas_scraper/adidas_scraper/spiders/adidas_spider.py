@@ -27,7 +27,9 @@ import scrapy
 from scrapy_splash import SplashRequest
 
 class AdidasSpiderSpider(scrapy.Spider):
-    # ... (rest of your code)
+    name = "adidas_spider"
+    allowed_domains = ["www.adidas.com"]
+    start_urls = ["https://www.adidas.com/us/men-athletic_sneakers"]
 
     def parse(self, response):
         product_cards = response.css('div.glass-product-card')
@@ -51,7 +53,7 @@ class AdidasSpiderSpider(scrapy.Spider):
             "category":"Men's Sneaker",
             "category_id":"63bc18eb473f136f0720ce0a",
             "seller":"Adidas",
-            "description":"",
+            "description": response.css('p.gl-vspace::text').get(),
             "reviewsCount": "",
             "ratings": "",
             "img" : response.css('picture[data-testid="pdp-gallery-picture"] img::attr(src)').get(),
