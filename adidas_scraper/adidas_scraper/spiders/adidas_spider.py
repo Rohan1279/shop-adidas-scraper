@@ -1,30 +1,7 @@
-# import scrapy
-# class AdidasSpiderSpider(scrapy.Spider):
-#     name = "adidas_spider"
-#     allowed_domains = ["www.adidas.com"]
-#     start_urls = ["https://www.adidas.com/us/men-athletic_sneakers"]
-
-#     def parse(self, response):
-#         product_cards = response.css('div.glass-product-card')
-
-#         print("\n******************\n" + "PRODUCTS COUNT", len(product_cards))
-#         for product_card in product_cards:
-#             relative_url  = product_card.css('a[data-auto-id="glass-hockeycard-link"]').attrib['href']
-              
-           
-#             product_url =  "https://www.adidas.com" + relative_url
-#             yield response.follow(product_url, callback=self.parse_product_page)
-
-        
-#         next_page = response.css('a[data-auto-id="plp-pagination-next"]').attrib['href']
-#         if next_page is not None:
-#                 next_page_url =  "https://www.adidas.com" + next_page
-#                 print("\n******************\n" + "NEXT PAGE" + "\n******************\n", next_page_url)
-#                 yield response.follow(next_page_url, callback=self.parse)
-
-# using splash
 import scrapy
-from scrapy_splash import SplashRequest
+import re  # to extract data from script tag using regex
+import json  # to convert string to json froms script tag
+
 
 class AdidasSpiderSpider(scrapy.Spider):
     name = "adidas_spider"
@@ -36,39 +13,73 @@ class AdidasSpiderSpider(scrapy.Spider):
 
         print("\n******************\n" + "PRODUCTS COUNT", len(product_cards))
         for product_card in product_cards:
-            relative_url  = product_card.css('a[data-auto-id="glass-hockeycard-link"]').attrib['href']
-            product_url =  "https://www.adidas.com" + relative_url
+            relative_url = product_card.css(
+                'a[data-auto-id="glass-hockeycard-link"]').attrib['href']
 
-            yield SplashRequest(url=product_url, callback=self.parse_product_page, args={'wait': 2})
-           
-        next_page = response.css('a[data-auto-id="plp-pagination-next"]').attrib['href']
+            product_url = "https://www.adidas.com" + relative_url
+            yield response.follow(product_url, callback=self.parse_product_page)
+
+        next_page = response.css(
+            'a[data-auto-id="plp-pagination-next"]').attrib['href']
         if next_page is not None:
-                next_page_url =  "https://www.adidas.com" + next_page
-                print("\n******************\n" + "NEXT PAGE" + "\n******************\n", next_page_url)
-                yield SplashRequest(url=next_page_url, callback=self.parse, args={'wait': 2})
+            next_page_url = "https://www.adidas.com" + next_page
+            print("\n******************\n" + "NEXT PAGE" +
+                  "\n******************\n", next_page_url)
+            yield response.follow(next_page_url, callback=self.parse)
+
+# using splash
+# import scrapy
+# from scrapy_splash import SplashRequest
+
+
+# class AdidasSpiderSpider(scrapy.Spider):
+#     name = "adidas_spider"
+#     allowed_domains = ["www.adidas.com"]
+#     start_urls = ["https://www.adidas.com/us/men-athletic_sneakers"]
+
+#     def parse(self, response):
+#         product_cards = response.css('div.glass-product-card')
+
+#         print("\n******************\n" + "PRODUCTS COUNT", len(product_cards))
+#         for product_card in product_cards:
+#             relative_url = product_card.css(
+#                 'a[data-auto-id="glass-hockeycard-link"]').attrib['href']
+#             product_url = "https://www.adidas.com" + relative_url
+
+#             yield SplashRequest(url=product_url, callback=self.parse_product_page, args={'wait': 10, "resource_timeout": 20, "timeout": 20})
+
+#         next_page = response.css(
+#             'a[data-auto-id="plp-pagination-next"]').attrib['href']
+#         if next_page is not None:
+#             next_page_url = "https://www.adidas.com" + next_page
+#             print("\n******************\n" + "NEXT PAGE" +
+#                   "\n******************\n", next_page_url)
+#             yield SplashRequest(url=next_page_url, callback=self.parse, args={'wait': 10,  "resource_timeout": 20, "timeout": 20})
 
     def parse_product_page(self, response):
-        
+        script = response.xpath(
+            '//script[contains(text(), "Product")]/text()').get()
+        data = json.loads(script)
         yield {
-            "category":"Men's Sneaker",
-            "category_id":"63bc18eb473f136f0720ce0a",
-            "seller":"Adidas",
-            "description": response.css('p.gl-vspace::text').get(),
-            "reviewsCount": "",
-            "ratings": "",
-            "img" : response.css('picture[data-testid="pdp-gallery-picture"] img::attr(src)').get(),
-            "name" : response.css('h1[data-auto-id="product-title"] span::text').get(),
-            "price" : response.css('div.gl-price-item::text').get(),
-            "color" : response.css('div[data-auto-id="color-label"] ::text').get(),
-            "seller_email":"adidas@adidas.com",
-            "seller_id":"",
-            "seller_name":"adidas",
-            "seller_phone":"",
+            # "category": "Men's Sneaker",
+            # "category_id": "63bc18eb473f136f0720ce0a",
+            # "seller": "Adidas",
+            "description": re.search(r'"description":\s*"([^"]+)"', script).group(1),
+            "reviewsCount": data['aggregateRating']['reviewCount'],
+            "ratings": data['aggregateRating']['ratingValue'],
+            "img": response.css('picture[data-testid="pdp-gallery-picture"] img::attr(src)').get(),
+            "name": response.css('h1[data-auto-id="product-title"] span::text').get(),
+            "price": response.css('div.gl-price-item::text').get(),
+            "color": response.css('div[data-auto-id="color-label"] ::text').get(),
+            # "seller_email": "adidas@adidas.com",
+            # "seller_id": "",
+            # "seller_name": "adidas",
+            # "seller_phone": "",
             # "isAdvertised":false,
             # "isReported":false,
             # "inStock":true,
-            "brand":"Adidas",
-            "sizes":[{"id":"1","name":"29","stock":"","price":""},{"id":"2","name":"30","stock":"","price":""},{"id":"3","name":"31","stock":"","price":""},{"id":"4","name":"32","stock":"","price":""},{"id":"5","name":"34","stock":"","price":""}],
+            # "brand": "Adidas",
+            # "sizes": [{"id": "1", "name": "29", "stock": "", "price": ""}, {"id": "2", "name": "30", "stock": "", "price": ""}, {"id": "3", "name": "31", "stock": "", "price": ""}, {"id": "4", "name": "32", "stock": "", "price": ""}, {"id": "5", "name": "34", "stock": "", "price": ""}],
         }
 
 
