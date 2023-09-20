@@ -1,6 +1,7 @@
 import scrapy
 import re  # to extract data from script tag using regex
 import json  # to convert string to json froms script tag
+from adidas_scraper.items import AddidasProductItem
 
 
 class AdidasSpiderSpider(scrapy.Spider):
@@ -56,32 +57,41 @@ class AdidasSpiderSpider(scrapy.Spider):
 #                   "\n******************\n", next_page_url)
 #             yield SplashRequest(url=next_page_url, callback=self.parse, args={'wait': 10,  "resource_timeout": 20, "timeout": 20})
 
+
     def parse_product_page(self, response):
         script = response.xpath(
             '//script[contains(text(), "Product")]/text()').get()
         data = json.loads(script)
-        yield {
-            # "category": "Men's Sneaker",
-            # "category_id": "63bc18eb473f136f0720ce0a",
-            # "seller": "Adidas",
-            "description": re.search(r'"description":\s*"([^"]+)"', script).group(1),
-            "reviewsCount": data['aggregateRating']['reviewCount'],
-            "ratings": data['aggregateRating']['ratingValue'],
-            "img": response.css('picture[data-testid="pdp-gallery-picture"] img::attr(src)').get(),
-            "name": response.css('h1[data-auto-id="product-title"] span::text').get(),
-            "price": response.css('div.gl-price-item::text').get(),
-            "color": response.css('div[data-auto-id="color-label"] ::text').get(),
-            # "seller_email": "adidas@adidas.com",
-            # "seller_id": "",
-            # "seller_name": "adidas",
-            # "seller_phone": "",
-            # "isAdvertised":false,
-            # "isReported":false,
-            # "inStock":true,
-            # "brand": "Adidas",
-            # "sizes": [{"id": "1", "name": "29", "stock": "", "price": ""}, {"id": "2", "name": "30", "stock": "", "price": ""}, {"id": "3", "name": "31", "stock": "", "price": ""}, {"id": "4", "name": "32", "stock": "", "price": ""}, {"id": "5", "name": "34", "stock": "", "price": ""}],
-        }
 
+        adidas_product = AddidasProductItem()
+
+        adidas_product["category"] = "Men's Sneaker",
+        adidas_product["category_id"] = "63bc18eb473f136f0720ce0a",
+        adidas_product["seller"] = "Adidas",
+        adidas_product["description"] = re.search(
+            r'"description":\s*"([^"]+)"', script).group(1),
+        adidas_product["reviewsCount"] = data['aggregateRating']['reviewCount'],
+        adidas_product["ratings"] = data['aggregateRating']['ratingValue'],
+        adidas_product["img"] = response.css(
+            'pictur[data-testid="pdp-gallery-picture"] img::attr(src)').get(),
+        adidas_product["name"] = response.css(
+            'h1[data-auto-id="product-title"]span::text').get(),
+        adidas_product["price"] = response.css(
+            'div.gl-price-item::text').get(),
+        adidas_product["color"] = response.css(
+            'div[data-auto-id="color-label"]::text').get(),
+        adidas_product["seller_email"] = "adidas@adidas.com",
+        adidas_product["seller_id"] = "",
+        adidas_product["seller_name"] = "adidas",
+        adidas_product["seller_phone"] = "",
+        adidas_product["isAdvertised"] = "",
+        adidas_product["isReported"] = "",
+        adidas_product["inStock"] = "",
+        adidas_product["brand"] = "Adidas",
+        adidas_product["sizes"] = [{"id": "1", "name": "29", "stock": "", "price": ""}, {"id": "2", "name": "30", "stock": "", "price": ""}, {
+            "id": "3", "name": "31", "stock": "", "price": ""}, {"id": "4", "name": "32", "stock": "", "price": ""}, {"id": "5", "name": "34", "stock": "", "price": ""}],
+
+        yield adidas_product
 
 # {"_id":{"$oid":"63c417a57229a7dca8c2095e"},
 #  "category":"Men's Pants",
