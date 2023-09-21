@@ -7,12 +7,13 @@ from adidas_scraper.items import AddidasProductItem
 class AdidasSpiderSpider(scrapy.Spider):
     name = "adidas_spider"
     allowed_domains = ["www.adidas.com"]
-    start_urls = ["https://www.adidas.com/us/men-athletic_sneakers"]
+    # start_urls = ["https://www.adidas.com/us/men-athletic_sneakers"]  # SNEAKERS
+    start_urls = ["https://www.adidas.com/us/men-tops"]  # TOPS
 
     def parse(self, response):
         product_cards = response.css('div.glass-product-card')
 
-        print("\n******************\n" + "PRODUCTS COUNT", len(product_cards))
+        # print("\n******************\n" + "PRODUCTS COUNT", len(product_cards))
         for product_card in product_cards:
             relative_url = product_card.css(
                 'a[data-auto-id="glass-hockeycard-link"]').attrib['href']
