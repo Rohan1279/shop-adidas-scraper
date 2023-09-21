@@ -14,6 +14,9 @@ class AdidasScraperItem(scrapy.Item):
 
 class AddidasProductItem(scrapy.Item):
     # define the fields for your item here like:
+    category = scrapy.Field()
+    category_id = scrapy.Field()
+    seller = scrapy.Field()
     description = scrapy.Field()
     reviewsCount = scrapy.Field()
     ratings = scrapy.Field()
@@ -21,9 +24,6 @@ class AddidasProductItem(scrapy.Item):
     name = scrapy.Field()
     price = scrapy.Field()
     color = scrapy.Field()
-    category = scrapy.Field()
-    category_id = scrapy.Field()
-    seller = scrapy.Field()
     seller_email = scrapy.Field()
     seller_id = scrapy.Field()
     seller_name = scrapy.Field()

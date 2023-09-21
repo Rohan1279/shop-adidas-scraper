@@ -10,4 +10,18 @@ from itemadapter import ItemAdapter
 
 class AdidasScraperPipeline:
     def process_item(self, item, spider):
+        adapter = ItemAdapter(item)
+
+        # Price -> convert to float
+        if adapter.get('price'):
+            adapter['price'] = float(adapter['price'].replace('$', ''))
+        else:
+            adapter['price'] = 100.0
+
+        # Description -> remove \\n from string
+        if adapter.get('description'):
+            adapter['description'] = adapter['description'].replace('\\n', '')
+        else:
+            adapter['description'] = "No description available"
+
         return item
