@@ -7,8 +7,8 @@ from adidas_scraper.items import AddidasProductItem
 class AdidasSpiderSpider(scrapy.Spider):
     name = "adidas_spider"
     allowed_domains = ["www.adidas.com"]
-    # start_urls = ["https://www.adidas.com/us/men-athletic_sneakers"]  # SNEAKERS
-    start_urls = ["https://www.adidas.com/us/men-tops"]  # TOPS
+    start_urls = ["https://www.adidas.com/us/men-athletic_sneakers"]  # SNEAKERS
+    # start_urls = ["https://www.adidas.com/us/men-tops"]  # TOPS
 
     def parse(self, response):
         product_cards = response.css('div.glass-product-card')
